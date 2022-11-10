@@ -114,6 +114,8 @@ ModbusTCPClient modbusTCPClient(client);
 // initialize the ethernet adapter. Trying DHCP, then fallback to defaults
 void initEthernet();
 
+
+
 void setup()
 {
 
@@ -128,6 +130,7 @@ void setup()
 
   ui.initScreen();
   initEthernet();
+  delay (1000);
 }
 
 long c1 = 0;
@@ -139,9 +142,10 @@ long c3o = -2;
 
 void loop()
 {
-  ui.renderSystemInfo();
+  
   while (!modbusTCPClient.connected())
   {
+    ui.renderSystemInfo(); 
     SPRINT("Trying to connect to Modbus Server at ");
     SPRINT(IPAddress(serverIp));
     SPRINT(":");
@@ -152,8 +156,7 @@ void loop()
       data.connected = false;
       SPRINTLN(" [FAILED]");
       SPRINTLN("Retry in 3 seconds");
-      ui.renderSystemInfo();
-      delay(3000);      
+      ui.renderSystemInfo();          
     }
     else
     {
@@ -163,9 +166,9 @@ void loop()
   }
 
   int i = 0;
+  ui.renderOverviewScreen();
   while (modbusTCPClient.connected())
-  {
-
+  {    
     c1 = modbusTCPClient.inputRegisterRead(AI1_IR);
     if (c1o != c1)
     {
@@ -191,7 +194,7 @@ void loop()
       c3o = c3;
     }
     delay(333);
-    ui.renderSystemInfo();
+   // ui.renderSystemInfo();
   }
 }
 

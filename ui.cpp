@@ -27,7 +27,7 @@ void UI::print(int x, int y, int sz, int color, const char *msg)
 {
 	int16_t x1, y1;
 	uint16_t wid, ht;
-	// tft.setFont( &FreeSans12pt7b);
+	// tft.setFont( &FreeSans18pt7b);
 	tft.setCursor(x, y);
 	tft.setTextColor(color);
 	tft.setTextSize(sz);
@@ -59,17 +59,106 @@ void UI::initScreen()
 	tft.begin(id);
 	tft.setRotation(1);
 	tft.fillScreen(BLACK);
-//	print(10, 10, 1, BLUE, "Hello\nWorld");
+	tft.setFont(&FreeSerif24pt7b);
+	tft.setCursor(120, 130);
+	tft.setTextColor(CYAN, BLACK);
+	tft.setTextSize(2);
+
+	tft.print("T.S.V.");
+	tft.setCursor(110, 220);
+	tft.print("Malsch");
+
+	tft.setTextSize(1);
+	tft.setFont(NULL);
+	tft.fillScreen(BLACK);
+}
+
+void UI::renderOverviewScreen()
+{
+	tft.setTextSize(1);
+	tft.setFont(NULL);
+	tft.fillScreen(BLACK);
+	tft.setFont(&FreeSans12pt7b);
+
+	uint16_t color;
+	tft.setCursor(384, 24);
+
+	if (isMixer)
+	{
+		color = GREEN;
+	}
+	else
+	{
+		color = CYAN;
+	}
+	// border whole screen
+	tft.drawRect(0, 22, 480, 300, color);
+
+	// label mixer/air
+	tft.fillRect(380, 0, 100, 30, BLACK);
+	tft.drawRoundRect(380, 0, 100, 30, 4, color);
+	if (isMixer)
+	{
+		tft.print("Mischer");
+	}
+	else
+	{
+		tft.print("Luft");
+	}
+
+	// render clock
+	tft.setFont(&FreeSans9pt7b);
+	tft.setCursor(10, 18);
+	tft.print("Kompressor Monitor");
+
+	// show pressure
+
+	tft.setCursor(14, 136);
+	tft.setTextSize(2);
+	tft.setFont(&FreeSevenSegNumFontPlusPlus);
+	tft.print("323");
+	// in bar
+	tft.setFont(&FreeSans12pt7b);
+	tft.setTextSize(2);
+	tft.print("   bar");
+	tft.drawLine(0, 150, 480, 150, color);
+
+	// show temperatures
+	tft.drawLine(0, 220, 480, 220, color);
+	tft.drawLine(240, 150, 240, 220, color);
+	tft.setCursor(20, 210);
+	tft.setTextSize(1);
+	tft.setFont(&FreeSevenSegNumFontPlusPlus);
+	tft.print("119.3");
+	// in GRad
+	tft.setFont(&FreeSans12pt7b);
+	tft.setTextSize(1);
+	tft.print("   °C");
+	tft.setCursor(260, 210);
+	tft.setFont(&FreeSevenSegNumFontPlusPlus);
+	tft.print("129.3");
+	// in GRad
+	tft.setFont(&FreeSans12pt7b);
+	tft.setTextSize(1);
+	tft.print("   °C");
+
+	tft.drawLine(0, 246, 480, 246, color);
+	tft.drawLine(0, 272, 480, 272, color);
+	tft.drawLine(0, 298, 480, 298, color);
+
+	// tft.fillScreen(BLACK);
+
+	// void fillRect(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h, uint16_t color);
 }
 
 void UI::renderSystemInfo()
 {
-	//tft.fillScreen(BLACK);
+	// tft.fillScreen(BLACK);
 	tft.setCursor(0, 0);
 	tft.setTextColor(WHITE, BLACK);
 	tft.setTextSize(2);
 	tft.print("Compressor Monitor");
-	//tft.drawLine(0, 15, 480, 15, GREY);
+	// tft.drawLine(0, 15, 480, 15, GREY);
 	tft.setCursor(0, 10);
 	tft.print("\nDisplay ID : 0x");
 	tft.print(tft.readID(), HEX);
@@ -86,7 +175,7 @@ void UI::renderSystemInfo()
 		tft.setTextColor(RED);
 		tft.print("[FAILED] ");
 	}
-	
+
 	tft.setTextColor(WHITE, BLACK);
 	tft.print("\nMAC Address: ");
 	tft.print(mac2CharArray(mac));

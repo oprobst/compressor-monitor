@@ -4,8 +4,13 @@
 
 #include "Adafruit_GFX.h"
 #include <MCUFRIEND_kbv.h>
-#include <Fonts/FreeSans12pt7b.h>
+#include <Fonts/FreeSerif24pt7b.h >
+#include <Fonts/FreeSans12pt7b.h >
+#include <Fonts/FreeSans9pt7b.h>
 #include <FreeDefaultFonts.h>
+#include <FreeSevenSegNumFontPlusPlus.h>
+
+
 #include <Ethernet.h>
 #include "Data.h"
 #include "Config.h"
@@ -34,6 +39,8 @@ char* mac2CharArray(byte [6]);
 
 
 public:
+
+bool isMixer = 0;
 
 // Show initial startup screen
 void initScreen ();
