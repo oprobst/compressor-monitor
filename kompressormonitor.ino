@@ -184,6 +184,7 @@ void loop()
       SPRINT("c2: ");
       SPRINTLN(c2);
       c2o = c2;
+      ui.showRoomTemp(c2/10.0f);
     }
 
     c3 = modbusTCPClient.discreteInputRead(I1_DI);

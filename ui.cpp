@@ -92,7 +92,7 @@ void UI::renderOverviewScreen()
 		color = CYAN;
 	}
 	// border whole screen
-	tft.drawRect(0, 22, 480, 300, color);
+	tft.drawRect(0, 22, 480, 298, color);
 
 	// label mixer/air
 	tft.fillRect(380, 0, 100, 30, BLACK);
@@ -237,4 +237,15 @@ void UI::printResult(int i)
 	char result[8];
 	// tft.fillRect(50,10,300,300,BLACK);
 	print(50, 100, 3, GREEN, dtostrf((i / 10.0f), 6, 1, result));
+}
+
+void UI::showRoomTemp (float f){
+	tft.fillRect(260, 158, 218, 54, BLACK);
+	tft.setCursor(260, 210);
+	tft.setFont(&FreeSevenSegNumFontPlusPlus);
+	tft.print(f,1);
+	// in GRad
+	tft.setFont(&FreeSans12pt7b);
+	tft.setTextSize(1);
+	tft.print("   °C");
 }

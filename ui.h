@@ -60,5 +60,7 @@ void println(String c);
 void print(int x, int y, int sz, int color, const char *msg);
 
 void printResult (int i);
+
+void showRoomTemp (float f);
 };
 #endif /* UI_H_ */
