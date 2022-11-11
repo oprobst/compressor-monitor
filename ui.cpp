@@ -104,11 +104,11 @@ void UI::renderOverviewScreen()
 	tft.setCursor(14, 136);
 	tft.setTextSize(2);
 	tft.setFont(&FreeSevenSegNumFontPlusPlus);
-	tft.print("323");
+	tft.print("   ");
 	// in bar
 	tft.setFont(&FreeSans12pt7b);
 	tft.setTextSize(2);
-	tft.print("   bar");
+	tft.print("123  bar");
 	tft.drawLine(0, 150, 480, 150, color);
 
 	// show temperatures
@@ -116,15 +116,15 @@ void UI::renderOverviewScreen()
 	tft.drawLine(240, 150, 240, 220, color);
 	tft.setCursor(20, 210);
 	tft.setTextSize(1);
-	tft.setFont(&FreeSevenSegNumFontPlusPlus);
-	tft.print("119.3");
+	tft.setFont(&FreeSerif24pt7b);
+	tft.print("123");
 	// in GRad
 	tft.setFont(&FreeSans12pt7b);
 	tft.setTextSize(1);
 	tft.print("   °C");
 	tft.setCursor(260, 210);
-	tft.setFont(&FreeSevenSegNumFontPlusPlus);
-	tft.print("129.3");
+	tft.setFont(&FreeSerif24pt7b);
+	tft.print("123");
 	// in GRad
 	tft.setFont(&FreeSans12pt7b);
 	tft.setTextSize(1);
@@ -191,11 +191,10 @@ void UI::renderSystemInfo()
 		tft.setTextColor(RED, BLACK);
 		tft.print("[FAILED] ");
 	}
-	tft.setCursor(0, 200);
-	tft.setTextColor(WHITE);
-	tft.print("Uptime     : ");
-	updateUptime ();
-
+	//tft.setCursor(0, 200);
+	//tft.setTextColor(WHITE);
+	//tft.print("Uptime     : ");
+	
 }
 
 void UI::updateUptime (){

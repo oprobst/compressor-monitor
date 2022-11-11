@@ -187,8 +187,8 @@ void loop()
   
   if (ui.activeView==ACTIVE_VIEW_SYSTEMINFO) ui.renderSystemInfo();
   while (ui.activeView == ACTIVE_VIEW_SYSTEMINFO && digitalRead(PIN_BUTTON)){
-    delay(100);    
-    ui.updateUptime ();
+    delay(200);    
+    //ui.updateUptime ();
   }
  
 }
