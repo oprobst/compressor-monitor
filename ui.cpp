@@ -56,7 +56,7 @@ void UI::initScreen()
 
 	tft.setTextSize(1);
 	tft.setFont(NULL);
-	tft.fillScreen(BLACK);
+	//tft.fillScreen(BLACK);
 }
 
 void UI::renderOverviewScreen()
@@ -104,11 +104,11 @@ void UI::renderOverviewScreen()
 	tft.setCursor(14, 136);
 	tft.setTextSize(2);
 	tft.setFont(&FreeSevenSegNumFontPlusPlus);
-	tft.print("   ");
+	tft.print("323");
 	// in bar
 	tft.setFont(&FreeSans12pt7b);
 	tft.setTextSize(2);
-	tft.print("123  bar");
+	tft.print("   bar");
 	tft.drawLine(0, 150, 480, 150, color);
 
 	// show temperatures
@@ -116,15 +116,15 @@ void UI::renderOverviewScreen()
 	tft.drawLine(240, 150, 240, 220, color);
 	tft.setCursor(20, 210);
 	tft.setTextSize(1);
-	tft.setFont(&FreeSerif24pt7b);
-	tft.print("123");
+	tft.setFont(&FreeSevenSegNumFontPlusPlus);
+	tft.print("119.3");
 	// in GRad
 	tft.setFont(&FreeSans12pt7b);
 	tft.setTextSize(1);
 	tft.print("   °C");
 	tft.setCursor(260, 210);
-	tft.setFont(&FreeSerif24pt7b);
-	tft.print("123");
+	tft.setFont(&FreeSevenSegNumFontPlusPlus);
+	tft.print("129.3");
 	// in GRad
 	tft.setFont(&FreeSans12pt7b);
 	tft.setTextSize(1);
@@ -146,7 +146,7 @@ void UI::renderSystemInfo()
 	tft.setCursor(0, 0);
 	tft.setTextColor(WHITE, BLACK);
 	tft.setTextSize(2);
-	tft.print("Compressor Monitor");
+	tft.print("Tauchsportverein Malsch");
 	// tft.drawLine(0, 15, 480, 15, GREY);
 	tft.setCursor(0, 10);
 	tft.print("\nDisplay ID : 0x");

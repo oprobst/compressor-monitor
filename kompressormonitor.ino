@@ -128,7 +128,7 @@ void setup()
   while (!logo.connect(modbusTCPClient))
   {  
     ui.renderSystemInfo();
-    delay (200);
+    delay (3000);
   }  
   delay(200);
 }
