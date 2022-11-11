@@ -27,6 +27,9 @@ extern Data data;
 #define WHITE   0xFFFF
 #define GREY    0x8410
 
+#define FILLTYPE_AIR 0
+#define FILLTYPE_MIX 1
+#define FILLTYPE_MAINTENANCE 2
 
 
 class UI {
@@ -40,7 +43,7 @@ char* mac2CharArray(byte [6]);
 
 public:
 
-bool isMixer = 0;
+int fillType = FILLTYPE_AIR;
 
 // Show initial startup screen
 void initScreen ();
@@ -62,5 +65,7 @@ void print(int x, int y, int sz, int color, const char *msg);
 void printResult (int i);
 
 void showRoomTemp (float f);
+void showEmergencyOffSwitch (bool f);
+
 };
 #endif /* UI_H_ */

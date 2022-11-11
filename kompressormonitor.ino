@@ -48,22 +48,6 @@
 #define AM9_HR 536
 #define AM10_HR 537
 
-#define DEBUG 1
-#if DEBUG
-#define SPRINT(s)    \
-  {                  \
-    Serial.print(s); \
-  }
-#define SPRINTLN(s)    \
-  {                    \
-    Serial.println(s); \
-  }
-#else
-#define SPRINT(s)
-#define SPRINTLN(s)
-#endif
-#define SERIALSPEED 9600
-
 #include <WString.h>
 #include <Arduino.h>
 #include <SPI.h>
@@ -71,13 +55,18 @@
 #include <ArduinoRS485.h>
 #include <ArduinoModbus.h>
 
+#include "DebugSerial.h"
 #include "Data.h"
 #include "ui.h"
+#include "Logo.h"
 
 // global shared data object contains all measurements
 Data data;
 // global shared configuration object
-//Config config;
+// Config config;
+
+// Access interface to the Siemens Logo
+Logo logo;
 
 // mac = {0xAA, 0x12, 0xBE, 0xEF, 0xFE, 0xED};
 // ip = {192, 168, 4, 99};
@@ -87,12 +76,12 @@ Data data;
 // serverPort = 503;
 
 // Some random MAC Address (since there is no one on the board)
-  byte mac[] = { 0xAA, 0x12, 0xBE, 0xEF, 0xFE, 0xED };
-  byte ip[] = { 192, 168, 4, 99 };
-  byte dns[] = { 192, 168, 4, 7 };
-  byte gateway[] = { 192, 168, 4, 8 };
-  byte serverIp[] = { 192, 168, 4, 100 };
-  int serverPort = 503;
+byte mac[] = {0xAA, 0x12, 0xBE, 0xEF, 0xFE, 0xED};
+byte ip[] = {192, 168, 4, 99};
+byte dns[] = {192, 168, 4, 7};
+byte gateway[] = {192, 168, 4, 8};
+byte serverIp[] = {192, 168, 4, 100};
+int serverPort = 503;
 
 #define LAN_NO_ERROR 0
 #define LAN_NO_ETH 1
@@ -104,18 +93,17 @@ Data data;
 int lanErrorCode = LAN_NO_ERROR;
 
 UI ui;
-
 EthernetClient client;
-
 ModbusTCPClient modbusTCPClient(client);
 
 // forward declarations
-
 // initialize the ethernet adapter. Trying DHCP, then fallback to defaults
 void initEthernet();
 
-
-
+/**
+ * Setup
+ *
+ */
 void setup()
 {
 
@@ -126,87 +114,67 @@ void setup()
     ;
   }
 #endif
-  SPRINTLN("Compressor Monitor application starting");
 
+  SPRINTLN("Compressor Monitor application starting");
   ui.initScreen();
   initEthernet();
-  delay (1000);
+  while (!logo.connect(modbusTCPClient))
+  {
+    ui.renderOverviewScreen();
+  }
+
+  delay(1000);
 }
 
-long c1 = 0;
-long c2 = 0;
-long c3 = 0;
-long c1o = -2;
-long c2o = -2;
-long c3o = -2;
-
+/**
+ * Main loop
+ */
 void loop()
 {
-  
-  while (!modbusTCPClient.connected())
-  {
-    ui.renderSystemInfo(); 
-    SPRINT("Trying to connect to Modbus Server at ");
-    SPRINT(IPAddress(serverIp));
-    SPRINT(":");
-    SPRINT(serverPort);
-    SPRINT("...");
-    if (!modbusTCPClient.begin(IPAddress(serverIp), serverPort))
-    {      
-      data.connected = false;
-      SPRINTLN(" [FAILED]");
-      SPRINTLN("Retry in 3 seconds");
-      ui.renderSystemInfo();          
-    }
-    else
-    {
-      SPRINTLN(" [SUCCESS]");
-      data.connected = true;
-    }
-  }
 
   int i = 0;
   ui.renderOverviewScreen();
   while (modbusTCPClient.connected())
-  {    
-    c1 = modbusTCPClient.inputRegisterRead(AI1_IR);
-    if (c1o != c1)
+  {
+    float val;
+    bool contact;
+
+    if (logo.readRoomTemp(&val))
+      ui.showRoomTemp(val);
+
+    if (logo.readEmergencyOffSwitch(&contact))
+      ui.showEmergencyOffSwitch(contact);
+
+    if (logo.readMaintenanceSwitch(&contact))
     {
-      SPRINT("c1: ");
-      SPRINTLN(c1);
-      c1o = c1;
-    }
-    // SPRINT (i);
-    c2 = modbusTCPClient.holdingRegisterRead(AM1_HR);
-    if (c2o != c2)
-    {
-      //   SPRINT (i);
-      SPRINT("c2: ");
-      SPRINTLN(c2);
-      c2o = c2;
-      ui.showRoomTemp(c2/10.0f);
+      if (contact)
+      {
+        logo.resetCache();
+        ui.fillType = FILLTYPE_MAINTENANCE;
+        ui.renderOverviewScreen();
+      }
+      else
+      {
+        // todo determine if mixer or air
+        logo.resetCache();
+        ui.fillType = FILLTYPE_AIR;
+        ui.renderOverviewScreen();
+      }
     }
 
-    c3 = modbusTCPClient.discreteInputRead(I1_DI);
-    if (c3o != c3)
-    {
-      SPRINT("c3: ");
-      SPRINTLN(c3);
-      c3o = c3;
-    }
-    delay(333);
-   // ui.renderSystemInfo();
+    delay(200);
   }
 }
 
+/**
+ * Init ethernet
+ */
 void initEthernet()
 {
   SPRINT("Get IP via DHCP...");
-
   if (Ethernet.begin(mac))
   {
     SPRINTLN(" [SUCCESS]");
-
     data.dhcpSuccess = true;
   }
   else
@@ -245,11 +213,4 @@ void initEthernet()
   SPRINTLN(Ethernet.gatewayIP());
   SPRINT("SubnetMask: ");
   SPRINTLN(Ethernet.subnetMask());
-
-
-  SPRINT("Trying to connect to Modbus Server at ");
-  SPRINT(IPAddress(serverIp));
-  SPRINT(":");
-  SPRINT(serverPort);
-  SPRINT("...");
 }

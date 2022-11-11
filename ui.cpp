@@ -1,20 +1,6 @@
 #include "ui.h"
-#include "uptime.h"
-
-#define DEBUG 0
-#if DEBUG
-#define SPRINT(s)        \
-	{                    \
-		Serial.print(s); \
-	}
-#define SPRINTLN(s)        \
-	{                      \
-		Serial.println(s); \
-	}
-#else
-#define SPRINT(s)
-#define SPRINTLN(s)
-#endif
+#include <uptime.h>
+#include "DebugSerial.h"
 
 extern byte mac[];
 extern byte ip[];
@@ -83,28 +69,30 @@ void UI::renderOverviewScreen()
 	uint16_t color;
 	tft.setCursor(384, 24);
 
-	if (isMixer)
+	String filltypeName = "";
+	switch (fillType)
 	{
+	case FILLTYPE_AIR:
 		color = GREEN;
-	}
-	else
-	{
+		filltypeName = "Luft";
+		break;
+	case FILLTYPE_MIX:
 		color = CYAN;
+		filltypeName = "Mischer";
+		break;
+	default: // FILLTYPE_MAINTENANCE
+		color = RED;
+		filltypeName = "Wartung";
 	}
+	
+    tft.setTextColor(color);
 	// border whole screen
 	tft.drawRect(0, 22, 480, 298, color);
 
 	// label mixer/air
 	tft.fillRect(380, 0, 100, 30, BLACK);
 	tft.drawRoundRect(380, 0, 100, 30, 4, color);
-	if (isMixer)
-	{
-		tft.print("Mischer");
-	}
-	else
-	{
-		tft.print("Luft");
-	}
+	tft.print(filltypeName);
 
 	// render clock
 	tft.setFont(&FreeSans9pt7b);
@@ -113,7 +101,7 @@ void UI::renderOverviewScreen()
 
 	// show pressure
 
-	tft.setCursor(14, 136);
+	tft.setCursor(14, 136);	
 	tft.setTextSize(2);
 	tft.setFont(&FreeSevenSegNumFontPlusPlus);
 	tft.print("323");
@@ -231,21 +219,27 @@ char *UI::mac2CharArray(byte mac[6])
 	return a;
 }
 
-void UI::printResult(int i)
+void UI::showRoomTemp(float f)
 {
-
-	char result[8];
-	// tft.fillRect(50,10,300,300,BLACK);
-	print(50, 100, 3, GREEN, dtostrf((i / 10.0f), 6, 1, result));
-}
-
-void UI::showRoomTemp (float f){
 	tft.fillRect(260, 158, 218, 54, BLACK);
 	tft.setCursor(260, 210);
 	tft.setFont(&FreeSevenSegNumFontPlusPlus);
-	tft.print(f,1);
+	tft.print(f, 1);
 	// in GRad
 	tft.setFont(&FreeSans12pt7b);
 	tft.setTextSize(1);
 	tft.print("   °C");
+}
+
+void UI::showEmergencyOffSwitch(bool f)
+{
+	if (f)
+	{
+		tft.setCursor(10, 319);
+		tft.fillRect(1, 300, 478, 19, BLACK);
+		tft.print("NOT AUS betaetigt!");
+	} else {
+		tft.setCursor(10, 318);
+		tft.fillRect(1, 300, 478, 19, BLACK);
+	}
 }
