@@ -60,7 +60,7 @@ void UI::initScreen()
 }
 
 void UI::renderOverviewScreen()
-{
+{ 
 	tft.setTextSize(1);
 	tft.setFont(NULL);
 	tft.fillScreen(BLACK);
@@ -73,19 +73,19 @@ void UI::renderOverviewScreen()
 	switch (fillType)
 	{
 	case FILLTYPE_AIR:
-		color = GREEN;
+		color = CYAN;
 		filltypeName = "Luft";
 		break;
 	case FILLTYPE_MIX:
-		color = CYAN;
+		color = GREEN;
 		filltypeName = "Mischer";
 		break;
 	default: // FILLTYPE_MAINTENANCE
 		color = RED;
 		filltypeName = "Wartung";
 	}
-	
-    tft.setTextColor(color);
+
+	tft.setTextColor(color);
 	// border whole screen
 	tft.drawRect(0, 22, 480, 298, color);
 
@@ -101,7 +101,7 @@ void UI::renderOverviewScreen()
 
 	// show pressure
 
-	tft.setCursor(14, 136);	
+	tft.setCursor(14, 136);
 	tft.setTextSize(2);
 	tft.setFont(&FreeSevenSegNumFontPlusPlus);
 	tft.print("323");
@@ -140,8 +140,9 @@ void UI::renderOverviewScreen()
 }
 
 void UI::renderSystemInfo()
-{
-	// tft.fillScreen(BLACK);
+{ 
+	tft.fillScreen(BLACK);
+	tft.setFont(NULL);
 	tft.setCursor(0, 0);
 	tft.setTextColor(WHITE, BLACK);
 	tft.setTextSize(2);
@@ -190,21 +191,31 @@ void UI::renderSystemInfo()
 		tft.setTextColor(RED, BLACK);
 		tft.print("[FAILED] ");
 	}
-	tft.setTextColor(WHITE, BLACK);
-	tft.print("\nUptime     : ");
+	tft.setCursor(0, 200);
+	tft.setTextColor(WHITE);
+	tft.print("Uptime     : ");
+	updateUptime ();
 
-	uptime::calculateUptime();
-	tft.print(uptime::getDays());
-	tft.print("d, ");
-	tft.print(uptime::getHours());
-	tft.print(":");
-	tft.print(uptime::getMinutes());
-	tft.print(":");
-	tft.print(uptime::getSeconds());
-	tft.print(",");
-	tft.print(uptime::getMilliseconds());
 }
 
+void UI::updateUptime (){
+ 	tft.setTextColor(WHITE, BLACK);
+	tft.setCursor(150, 200);
+	 
+	uptime::calculateUptime();
+	String uptimeString = "";
+	uptimeString+= uptime::getDays();
+	uptimeString+="d, ";
+	uptimeString+=uptime::getHours();
+	uptimeString+=":";
+	uptimeString+=uptime::getMinutes();
+	uptimeString+=":";
+	uptimeString+=uptime::getSeconds();
+	uptimeString+=",";
+	uptimeString+=uptime::getMilliseconds();
+	uptimeString+="            ";
+	tft.print (uptimeString);
+}
 char *UI::ip2CharArray(IPAddress ip)
 {
 	static char a[16];
@@ -238,7 +249,9 @@ void UI::showEmergencyOffSwitch(bool f)
 		tft.setCursor(10, 319);
 		tft.fillRect(1, 300, 478, 19, BLACK);
 		tft.print("NOT AUS betaetigt!");
-	} else {
+	}
+	else
+	{
 		tft.setCursor(10, 318);
 		tft.fillRect(1, 300, 478, 19, BLACK);
 	}

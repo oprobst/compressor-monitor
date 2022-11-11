@@ -31,6 +31,11 @@ extern Data data;
 #define FILLTYPE_MIX 1
 #define FILLTYPE_MAINTENANCE 2
 
+#define ACTIVE_VIEW_OVERVIEW 0
+#define ACTIVE_VIEW_SYSTEMINFO 1
+#define ACTIVE_VIEW_ALERT 2
+
+
 
 class UI {
 
@@ -42,7 +47,7 @@ char* mac2CharArray(byte [6]);
 
 
 public:
-
+int activeView = ACTIVE_VIEW_OVERVIEW;
 int fillType = FILLTYPE_AIR;
 
 // Show initial startup screen
@@ -66,6 +71,8 @@ void printResult (int i);
 
 void showRoomTemp (float f);
 void showEmergencyOffSwitch (bool f);
+
+void updateUptime ();
 
 };
 #endif /* UI_H_ */

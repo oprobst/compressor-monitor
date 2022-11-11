@@ -60,6 +60,8 @@
 #include "ui.h"
 #include "Logo.h"
 
+#define PIN_BUTTON 53
+
 // global shared data object contains all measurements
 Data data;
 // global shared configuration object
@@ -108,6 +110,10 @@ void setup()
 {
 
 #if DEBUG
+
+  pinMode(PIN_BUTTON, INPUT);
+  digitalWrite(PIN_BUTTON, HIGH);
+
   Serial.begin(SERIALSPEED);
   while (!Serial)
   {
@@ -118,12 +124,13 @@ void setup()
   SPRINTLN("Compressor Monitor application starting");
   ui.initScreen();
   initEthernet();
+  delay (500);
   while (!logo.connect(modbusTCPClient))
-  {
-    ui.renderOverviewScreen();
-  }
-
-  delay(1000);
+  {  
+    ui.renderSystemInfo();
+    delay (200);
+  }  
+  delay(200);
 }
 
 /**
@@ -131,11 +138,24 @@ void setup()
  */
 void loop()
 {
-
-  int i = 0;
-  ui.renderOverviewScreen();
-  while (modbusTCPClient.connected())
+  if (!digitalRead(PIN_BUTTON))
   {
+    if (ui.activeView == ACTIVE_VIEW_OVERVIEW)
+    {
+      ui.activeView = ACTIVE_VIEW_SYSTEMINFO;
+    }
+    else
+    {
+      ui.activeView = ACTIVE_VIEW_OVERVIEW;
+    }
+  }
+  logo.resetCache();
+  delay (250);
+   
+  if (ui.activeView==ACTIVE_VIEW_OVERVIEW) ui.renderOverviewScreen();
+  while (modbusTCPClient.connected() && digitalRead(PIN_BUTTON) && ui.activeView == ACTIVE_VIEW_OVERVIEW)
+  {    
+    delay(200);  
     float val;
     bool contact;
 
@@ -162,8 +182,15 @@ void loop()
       }
     }
 
-    delay(200);
+   
+  } 
+  
+  if (ui.activeView==ACTIVE_VIEW_SYSTEMINFO) ui.renderSystemInfo();
+  while (ui.activeView == ACTIVE_VIEW_SYSTEMINFO && digitalRead(PIN_BUTTON)){
+    delay(100);    
+    ui.updateUptime ();
   }
+ 
 }
 
 /**
