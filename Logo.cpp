@@ -7,50 +7,35 @@
 extern byte serverIp[];
 extern int serverPort;
 
+void Logo::resetCache()
+{
+  roomTemperature = -274;
+  comp1Temp = -274;
+  comp2Temp = -274;
+  comp3Temp = -274;
 
-void Logo::resetCache (){
-     roomTemperature = -274;
-     compressorStage1Temp = -274;
-     compressorStage2Temp = -274;
-     compressorStage3Temp = -274;
-
-     compressorStage1Pressure = -1;    
-     compressorStage2Pressure = -1;
-     compressorStage3Pressure = -1;    
-     compressorOilPressure = -1;
-
-     nx1Pressure = -1;    
-     nx2Pressure = -1;
-     nx3Pressure = -1;    
-    
-     emergencyOffSwitch = NULL;
-     summerSwitch = false;
-     humidityAlert = false;
-     rollershutter = false;
-     ventilationInside = false;
-     ventilationOutside = false;
-     heater = false;
-     kompressorRunning = false;
+  emergencyOffSwitch = NULL;
+  summerSwitch = false;
+  humidityAlert = false;
+  rollershutter = false;
+  ventilationInside = false;
+  ventilationOutside = false;
+  heater = false;
+  kompressorRunning = false;
 }
 
-bool Logo::connect(ModbusTCPClient modbusTCPClient)
+bool Logo::connect(ModbusTCPClient * modbusTCPClient)
 {
-  this->modbusTCPClient = & modbusTCPClient;
+  this->modbusTCPClient = modbusTCPClient;
 
-  SPRINT("Trying to connect to Modbus Server at ");
-  SPRINT(IPAddress(serverIp));
-  SPRINT(":");
-  SPRINT(serverPort);
-  SPRINT("...");
-
-  while (!modbusTCPClient.connected())
+  while (!modbusTCPClient->connected())
   {
     SPRINT("Trying to connect to Modbus Server at ");
     SPRINT(IPAddress(serverIp));
     SPRINT(":");
     SPRINT(serverPort);
     SPRINT("...");
-    if (!modbusTCPClient.begin(IPAddress(serverIp), serverPort))
+    if (!modbusTCPClient->begin(IPAddress(serverIp), serverPort))
     {
       data.connected = false;
       SPRINTLN(" [FAILED]");
@@ -65,33 +50,65 @@ bool Logo::connect(ModbusTCPClient modbusTCPClient)
   }
 }
 
-bool Logo::readRoomTemp(float * value)
+bool Logo::readRoomTemp(float *value)
 {
   long i = modbusTCPClient->holdingRegisterRead(AM1_HR);
   bool changed = (roomTemperature != i);
-  if (changed) roomTemperature = i;
+  if (changed)
+    roomTemperature = i;
   *value = i / 10.0f;
   return changed;
 }
 
-bool Logo::readEmergencyOffSwitch(bool * value)
+bool Logo::readEmergencyOffSwitch(bool *value)
 {
   bool i = modbusTCPClient->discreteInputRead(I3_DI);
   bool changed = (emergencyOffSwitch != i);
-  if (changed) emergencyOffSwitch = i;
+  if (changed)
+    emergencyOffSwitch = i;
   *value = emergencyOffSwitch;
   return changed;
 }
 
-bool Logo::readMaintenanceSwitch(bool * value)
+bool Logo::readMaintenanceSwitch(bool *value)
 {
   bool i = modbusTCPClient->discreteInputRead(I4_DI);
   bool changed = (maintenanceSwitch != i);
-  if (changed) maintenanceSwitch= i;
+  if (changed)
+    maintenanceSwitch = i;
   *value = maintenanceSwitch;
   return changed;
 }
 
+bool Logo::readCompressorStage1Temp(float *value)
+{
+  long i = modbusTCPClient->holdingRegisterRead(AM2_HR);
+  bool changed = (comp1Temp != i);
+  if (changed)
+    comp1Temp = i;
+  *value = i / 10.0f;
+  return changed;
+}
+
+bool Logo::readCompressorStage2Temp(float *value)
+{
+  long i = modbusTCPClient->holdingRegisterRead(AM3_HR);
+  bool changed = (comp2Temp != i);
+  if (changed)
+    comp2Temp = i;
+  *value = i / 10.0f;
+  return changed;
+}
+
+bool Logo::readCompressorStage3Temp(float *value)
+{
+  long i = modbusTCPClient->holdingRegisterRead(AM4_HR);
+  bool changed = (comp3Temp != i);
+  if (changed)
+    comp3Temp = i;
+  *value = i / 10.0f;
+  return changed;
+  }
 
 
 /*

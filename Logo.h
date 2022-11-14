@@ -53,18 +53,10 @@ class Logo
 private:
     ModbusTCPClient *modbusTCPClient;
     long roomTemperature = -274;
-    long compressorStage1Temp = -274;
-    long compressorStage2Temp = -274;
-    long compressorStage3Temp = -274;
+    long comp1Temp = -274;
+    long comp2Temp = -274;
+    long comp3Temp = -274;
 
-    long compressorStage1Pressure = -1;    
-    long compressorStage2Pressure = -1;
-    long compressorStage3Pressure = -1;    
-    long compressorOilPressure = -1;
-
-    long nx1Pressure = -1;    
-    long nx2Pressure = -1;
-    long nx3Pressure = -1;    
     
     bool emergencyOffSwitch = NULL;
     bool maintenanceSwitch = false;
@@ -79,22 +71,13 @@ private:
 
 
 public:
-    bool connect(ModbusTCPClient modbusTCPClient);
+    bool connect(ModbusTCPClient * modbusTCPClient);
     bool readRoomTemp(float *value);
 
     bool readCompressorStage1Temp (float * value);    
     bool readCompressorStage2Temp (float * value);    
     bool readCompressorStage3Temp (float * value);
-
-    bool readCompressorStage1Pressure (float * value);
-    bool readCompressorStage2Pressure  (float * value);
-    bool readCompressorStage3Pressure (float * value); 
-    bool readCompressorOilPressure (float * value);
-
-    bool readNx1Pressure  (float * value);  
-    bool readNx2Pressure (float * value);
-    bool readNx3Pressure  (float * value);
-    
+     
     bool readEmergencyOffSwitch (bool * value);
     bool readMaintenanceSwitch (bool * value);
     bool readSummerSwitch (bool * value);

@@ -5,8 +5,10 @@
 #include "Adafruit_GFX.h"
 #include <MCUFRIEND_kbv.h>
 #include <Fonts/FreeSerif24pt7b.h >
+#include <Fonts/FreeMono18pt7b.h >
 #include <Fonts/FreeSans12pt7b.h >
 #include <Fonts/FreeSans9pt7b.h>
+
 #include <FreeDefaultFonts.h>
 #include <FreeSevenSegNumFontPlusPlus.h>
 
@@ -35,16 +37,19 @@ extern Data data;
 #define ACTIVE_VIEW_SYSTEMINFO 1
 #define ACTIVE_VIEW_ALERT 2
 
-
+#define COMPRESSOR_STATUS_OFF 0
+#define COMPRESSOR_STATUS_ON 1
+#define COMPRESSOR_STATUS_ALERT 2
+#define COMPRESSOR_STATUS_MAINTENANCE 3
 
 class UI {
 
 private:
 MCUFRIEND_kbv tft;
-
+uint16_t color;
 char* ip2CharArray(IPAddress ip);
 char* mac2CharArray(byte [6]);
-
+void showTemperatureOnLocation(float temp, int location);
 
 public:
 int activeView = ACTIVE_VIEW_OVERVIEW;
@@ -70,9 +75,21 @@ void print(int x, int y, int sz, int color, const char *msg);
 void printResult (int i);
 
 void showRoomTemp (float f);
+void showCompressorStage1Temp (float f);
+void showCompressorStage2Temp (float f);
+void showCompressorStage3Temp (float f);
+
 void showEmergencyOffSwitch (bool f);
 
-void updateUptime ();
+
+/**
+ * Select status from 
+ * COMPRESSOR_STATUS_OFF 0
+ * COMPRESSOR_STATUS_ON 1
+ * COMPRESSOR_STATUS_ALERT 2
+ * COMPRESSOR_STATUS_MAINTENANCE 3
+ */
+void renderCompressor(int status);
 
 };
 #endif /* UI_H_ */

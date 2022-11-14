@@ -1,5 +1,4 @@
 #include "ui.h"
-#include <uptime.h>
 #include "DebugSerial.h"
 
 extern byte mac[];
@@ -9,7 +8,7 @@ extern byte gateway[];
 extern byte serverIp[];
 extern int serverPort;
 
-void UI::print(int x, int y, int sz, int color, const char *msg)
+void UI::print(int x, int y, int sz, int iconColor, const char *msg)
 {
 	int16_t x1, y1;
 	uint16_t wid, ht;
@@ -42,9 +41,12 @@ void UI::initScreen()
 		SPRINTLN(" [FAILED]");
 	}
 
+	color = BLACK;
 	tft.begin(id);
+	// tft.cp437(true);
 	tft.setRotation(1);
 	tft.fillScreen(BLACK);
+
 	tft.setFont(&FreeSerif24pt7b);
 	tft.setCursor(120, 130);
 	tft.setTextColor(CYAN, BLACK);
@@ -56,17 +58,16 @@ void UI::initScreen()
 
 	tft.setTextSize(1);
 	tft.setFont(NULL);
-	//tft.fillScreen(BLACK);
+	// tft.fillScreen(BLACK);
 }
 
 void UI::renderOverviewScreen()
-{ 
+{
 	tft.setTextSize(1);
 	tft.setFont(NULL);
 	tft.fillScreen(BLACK);
 	tft.setFont(&FreeSans12pt7b);
 
-	uint16_t color;
 	tft.setCursor(384, 24);
 
 	String filltypeName = "";
@@ -100,7 +101,6 @@ void UI::renderOverviewScreen()
 	tft.print("Kompressor Monitor");
 
 	// show pressure
-
 	tft.setCursor(14, 136);
 	tft.setTextSize(2);
 	tft.setFont(&FreeSevenSegNumFontPlusPlus);
@@ -111,42 +111,28 @@ void UI::renderOverviewScreen()
 	tft.print("   bar");
 	tft.drawLine(0, 150, 480, 150, color);
 
-	// show temperatures
+	// show first temperature block
 	tft.drawLine(0, 220, 480, 220, color);
 	tft.drawLine(240, 150, 240, 220, color);
-	tft.setCursor(20, 210);
-	tft.setTextSize(1);
-	tft.setFont(&FreeSevenSegNumFontPlusPlus);
-	tft.print("119.3");
+	showTemperatureOnLocation(-274, 0);
+	showTemperatureOnLocation(-274, 1);
 	// in GRad
-	tft.setFont(&FreeSans12pt7b);
-	tft.setTextSize(1);
-	tft.print("   °C");
-	tft.setCursor(260, 210);
-	tft.setFont(&FreeSevenSegNumFontPlusPlus);
-	tft.print("129.3");
-	// in GRad
-	tft.setFont(&FreeSans12pt7b);
-	tft.setTextSize(1);
-	tft.print("   °C");
 
-	tft.drawLine(0, 246, 480, 246, color);
-	tft.drawLine(0, 272, 480, 272, color);
-	tft.drawLine(0, 298, 480, 298, color);
-
-	// tft.fillScreen(BLACK);
-
-	// void fillRect(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h, uint16_t color);
+	// show seconnd temperature block
+	tft.drawLine(0, 290, 480, 290, color);
+	tft.drawLine(240, 220, 240, 290, color);
+	showTemperatureOnLocation(-274, 2);
+	showTemperatureOnLocation(-274, 3);
 }
 
 void UI::renderSystemInfo()
-{ 
+{
 	tft.fillScreen(BLACK);
 	tft.setFont(NULL);
 	tft.setCursor(0, 0);
 	tft.setTextColor(WHITE, BLACK);
 	tft.setTextSize(2);
-	tft.print("Tauchsportverein Malsch");
+	tft.print("System Information");
 	// tft.drawLine(0, 15, 480, 15, GREY);
 	tft.setCursor(0, 10);
 	tft.print("\nDisplay ID : 0x");
@@ -191,30 +177,11 @@ void UI::renderSystemInfo()
 		tft.setTextColor(RED, BLACK);
 		tft.print("[FAILED] ");
 	}
-	//tft.setCursor(0, 200);
-	//tft.setTextColor(WHITE);
-	//tft.print("Uptime     : ");
-	
+	// tft.setCursor(0, 200);
+	// tft.setTextColor(WHITE);
+	// tft.print("Uptime     : ");
 }
 
-void UI::updateUptime (){
- 	tft.setTextColor(WHITE, BLACK);
-	tft.setCursor(150, 200);
-	 
-	uptime::calculateUptime();
-	String uptimeString = "";
-	uptimeString+= uptime::getDays();
-	uptimeString+="d, ";
-	uptimeString+=uptime::getHours();
-	uptimeString+=":";
-	uptimeString+=uptime::getMinutes();
-	uptimeString+=":";
-	uptimeString+=uptime::getSeconds();
-	uptimeString+=",";
-	uptimeString+=uptime::getMilliseconds();
-	uptimeString+="            ";
-	tft.print (uptimeString);
-}
 char *UI::ip2CharArray(IPAddress ip)
 {
 	static char a[16];
@@ -229,16 +196,60 @@ char *UI::mac2CharArray(byte mac[6])
 	return a;
 }
 
-void UI::showRoomTemp(float f)
+void UI::showTemperatureOnLocation(float temp, int location)
 {
-	tft.fillRect(260, 158, 218, 54, BLACK);
-	tft.setCursor(260, 210);
-	tft.setFont(&FreeSevenSegNumFontPlusPlus);
-	tft.print(f, 1);
+	tft.setTextSize(1);
+	switch (location)
+	{
+	case 0:
+		tft.setCursor(20, 210);
+		tft.fillRect(1, 151, 238, 69, BLACK);
+		break;
+	case 1:
+		tft.setCursor(260, 210);
+		tft.fillRect(241, 151, 238, 69, BLACK);
+		break;
+	case 2:
+		tft.setCursor(20, 280);
+		tft.fillRect(1, 221, 238, 69, BLACK);
+		break;
+	default:
+		tft.setCursor(260, 280);
+		tft.fillRect(241, 221, 238, 69, BLACK);
+		break;
+	}
+	tft.setFont(&FreeMono18pt7b);
+	if (temp > -273)
+	{
+		tft.print(temp, 1);
+	}
+	else
+	{
+		tft.print("---");
+	}
 	// in GRad
 	tft.setFont(&FreeSans12pt7b);
 	tft.setTextSize(1);
-	tft.print("   °C");
+	// tft.print (0x00BA);
+	tft.print("   'C");
+}
+void UI::showRoomTemp(float f)
+{
+	showTemperatureOnLocation(f, 0);
+}
+
+void UI::showCompressorStage1Temp(float f)
+{
+	showTemperatureOnLocation(f, 1);
+}
+
+void UI::showCompressorStage2Temp(float f)
+{
+	showTemperatureOnLocation(f, 2);
+}
+void UI::showCompressorStage3Temp(float f)
+{
+	showTemperatureOnLocation(f, 3);
 }
 
 void UI::showEmergencyOffSwitch(bool f)
@@ -254,4 +265,59 @@ void UI::showEmergencyOffSwitch(bool f)
 		tft.setCursor(10, 318);
 		tft.fillRect(1, 300, 478, 19, BLACK);
 	}
+}
+
+void UI::renderCompressor(int status)
+{
+	uint16_t iconColor = BLACK;
+	String text = "";
+
+	switch (status)
+	{
+	case COMPRESSOR_STATUS_ON:
+		iconColor = GREEN;
+		text = "AN";
+		break;
+	case COMPRESSOR_STATUS_OFF:
+		iconColor = GREY;
+		text = "AUS";
+		break;
+	case COMPRESSOR_STATUS_MAINTENANCE:
+		iconColor = YELLOW;
+		text = "WART.";
+		break;
+	case COMPRESSOR_STATUS_ALERT:
+		iconColor = RED;
+		text = "ERR";
+		break;
+	default:
+		iconColor = BLACK;
+		text = "UNKNOWN";
+	}
+	int offX = 400;
+	int offY = 50;
+	tft.fillCircle(offX + 30, offY + 30, 30, BLACK);
+	tft.drawCircle(offX + 30, offY + 30, 28, iconColor);
+	tft.drawCircle(offX + 30, offY + 30, 29, iconColor);
+	tft.drawCircle(offX + 30, offY + 30, 30, iconColor);
+
+	tft.drawLine(offX + 7, offY + 10, offX + 58, offY + 20, iconColor);
+	tft.drawLine(offX + 7, offY + 50, offX + 58, offY + 40, iconColor);
+
+	tft.drawLine(offX + 7, offY + 11, offX + 58, offY + 21, iconColor);
+	tft.drawLine(offX + 7, offY + 49, offX + 58, offY + 39, iconColor);
+
+	tft.drawLine(offX + 25, offY + 31, offX + 40, offY + 31, iconColor);
+	tft.drawLine(offX + 25, offY + 30, offX + 40, offY + 30, iconColor);
+	tft.drawLine(offX + 25, offY + 29, offX + 40, offY + 29, iconColor);
+
+	tft.drawLine(offX + 41, offY + 25, offX + 41, offY + 35, iconColor);
+	tft.drawLine(offX + 40, offY + 25, offX + 40, offY + 35, iconColor);
+	tft.drawLine(offX + 39, offY + 25, offX + 39, offY + 35, iconColor);
+
+	tft.setTextSize(1);
+	tft.setTextColor(iconColor, BLACK);
+	tft.setCursor(offX, offY + 85);
+	tft.print(text);
+	tft.setTextColor(color, BLACK);
 }

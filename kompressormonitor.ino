@@ -64,18 +64,9 @@
 
 // global shared data object contains all measurements
 Data data;
-// global shared configuration object
-// Config config;
 
 // Access interface to the Siemens Logo
 Logo logo;
-
-// mac = {0xAA, 0x12, 0xBE, 0xEF, 0xFE, 0xED};
-// ip = {192, 168, 4, 99};
-// dns = {192, 168, 4, 7};
-// gateway = {192, 168, 4, 8};
-// serverIp = {192, 168, 4, 100};
-// serverPort = 503;
 
 // Some random MAC Address (since there is no one on the board)
 byte mac[] = {0xAA, 0x12, 0xBE, 0xEF, 0xFE, 0xED};
@@ -125,7 +116,7 @@ void setup()
   ui.initScreen();
   initEthernet();
   delay (500);
-  while (!logo.connect(modbusTCPClient))
+  while (!logo.connect(&modbusTCPClient))
   {  
     ui.renderSystemInfo();
     delay (3000);
@@ -136,6 +127,9 @@ void setup()
 /**
  * Main loop
  */
+float valBuf;
+bool contactBuf;
+
 void loop()
 {
   if (!digitalRead(PIN_BUTTON))
@@ -151,27 +145,34 @@ void loop()
   }
   logo.resetCache();
   delay (250);
-   
+ 
   if (ui.activeView==ACTIVE_VIEW_OVERVIEW) ui.renderOverviewScreen();
-  while (modbusTCPClient.connected() && digitalRead(PIN_BUTTON) && ui.activeView == ACTIVE_VIEW_OVERVIEW)
+    
+  while (digitalRead(PIN_BUTTON) && ui.activeView == ACTIVE_VIEW_OVERVIEW && modbusTCPClient.connected())
   {    
-    delay(200);  
-    float val;
-    bool contact;
+    delay(250);  
+  
+  if (logo.readRoomTemp(&valBuf))
+      ui.showRoomTemp(valBuf);
+ if (logo.readCompressorStage1Temp(&valBuf))
+      ui.showCompressorStage1Temp(valBuf);
+ if (logo.readCompressorStage2Temp(&valBuf))
+      ui.showCompressorStage2Temp(valBuf);
+ if (logo.readCompressorStage3Temp(&valBuf))
+      ui.showCompressorStage3Temp(valBuf);
 
-    if (logo.readRoomTemp(&val))
-      ui.showRoomTemp(val);
 
-    if (logo.readEmergencyOffSwitch(&contact))
-      ui.showEmergencyOffSwitch(contact);
+    if (logo.readEmergencyOffSwitch(&contactBuf))
+      ui.showEmergencyOffSwitch(contactBuf);
 
-    if (logo.readMaintenanceSwitch(&contact))
+    if (logo.readMaintenanceSwitch(&contactBuf))
     {
-      if (contact)
+      if (contactBuf)
       {
         logo.resetCache();
         ui.fillType = FILLTYPE_MAINTENANCE;
         ui.renderOverviewScreen();
+        ui.renderCompressor(COMPRESSOR_STATUS_MAINTENANCE);
       }
       else
       {
@@ -179,16 +180,15 @@ void loop()
         logo.resetCache();
         ui.fillType = FILLTYPE_AIR;
         ui.renderOverviewScreen();
+        ui.renderCompressor(COMPRESSOR_STATUS_OFF);
       }
     }
-
    
   } 
   
   if (ui.activeView==ACTIVE_VIEW_SYSTEMINFO) ui.renderSystemInfo();
   while (ui.activeView == ACTIVE_VIEW_SYSTEMINFO && digitalRead(PIN_BUTTON)){
     delay(200);    
-    //ui.updateUptime ();
   }
  
 }
