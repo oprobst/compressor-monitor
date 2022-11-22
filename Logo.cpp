@@ -52,7 +52,7 @@ bool Logo::connect(ModbusTCPClient * modbusTCPClient)
 
 bool Logo::readRoomTemp(float *value)
 {
-  long i = modbusTCPClient->holdingRegisterRead(AM1_HR);
+  long i = modbusTCPClient->inputRegisterRead(AI3_IR);
   bool changed = (roomTemperature != i);
   if (changed)
     roomTemperature = i;
@@ -62,7 +62,7 @@ bool Logo::readRoomTemp(float *value)
 
 bool Logo::readEmergencyOffSwitch(bool *value)
 {
-  bool i = modbusTCPClient->discreteInputRead(I3_DI);
+  bool i = !modbusTCPClient->discreteInputRead(I3_DI);
   bool changed = (emergencyOffSwitch != i);
   if (changed)
     emergencyOffSwitch = i;
@@ -72,7 +72,7 @@ bool Logo::readEmergencyOffSwitch(bool *value)
 
 bool Logo::readMaintenanceSwitch(bool *value)
 {
-  bool i = modbusTCPClient->discreteInputRead(I4_DI);
+  bool i = !modbusTCPClient->discreteInputRead(I4_DI);
   bool changed = (maintenanceSwitch != i);
   if (changed)
     maintenanceSwitch = i;
@@ -82,7 +82,7 @@ bool Logo::readMaintenanceSwitch(bool *value)
 
 bool Logo::readCompressorStage1Temp(float *value)
 {
-  long i = modbusTCPClient->holdingRegisterRead(AM2_HR);
+  long i = modbusTCPClient->inputRegisterRead(AI4_IR);
   bool changed = (comp1Temp != i);
   if (changed)
     comp1Temp = i;
@@ -92,7 +92,7 @@ bool Logo::readCompressorStage1Temp(float *value)
 
 bool Logo::readCompressorStage2Temp(float *value)
 {
-  long i = modbusTCPClient->holdingRegisterRead(AM3_HR);
+  long i = modbusTCPClient->inputRegisterRead(AI5_IR);
   bool changed = (comp2Temp != i);
   if (changed)
     comp2Temp = i;
@@ -102,7 +102,7 @@ bool Logo::readCompressorStage2Temp(float *value)
 
 bool Logo::readCompressorStage3Temp(float *value)
 {
-  long i = modbusTCPClient->holdingRegisterRead(AM4_HR);
+  long i = modbusTCPClient->inputRegisterRead(AI6_IR);
   bool changed = (comp3Temp != i);
   if (changed)
     comp3Temp = i;
@@ -110,6 +110,15 @@ bool Logo::readCompressorStage3Temp(float *value)
   return changed;
   }
 
+bool Logo::readPressureAir(float *value)
+{
+  long i = modbusTCPClient->inputRegisterRead(AI1_IR);
+  bool changed = (pressureAir != i);
+  if (changed)
+    pressureAir = i;
+  *value = i / 10.0f;
+  return changed;
+  }
 
 /*
 float offdeeleteme()

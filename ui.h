@@ -74,6 +74,8 @@ void print(int x, int y, int sz, int color, const char *msg);
 
 void printResult (int i);
 
+void showPressureAir(float f);
+
 void showRoomTemp (float f);
 void showCompressorStage1Temp (float f);
 void showCompressorStage2Temp (float f);

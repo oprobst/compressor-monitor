@@ -52,6 +52,10 @@ class Logo
 {
 private:
     ModbusTCPClient *modbusTCPClient;
+   
+    long pressureAir = -1;
+    long pressureMix = -1;
+
     long roomTemperature = -274;
     long comp1Temp = -274;
     long comp2Temp = -274;
@@ -72,8 +76,11 @@ private:
 
 public:
     bool connect(ModbusTCPClient * modbusTCPClient);
-    bool readRoomTemp(float *value);
 
+    bool readPressureAir (float * value);    
+    bool readPressureMix (float * value); 
+
+    bool readRoomTemp(float *value);
     bool readCompressorStage1Temp (float * value);    
     bool readCompressorStage2Temp (float * value);    
     bool readCompressorStage3Temp (float * value);

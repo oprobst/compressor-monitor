@@ -28,14 +28,14 @@
 #define I15_DI 14
 #define I16_DI 15
 
-#define AI1_IR 0
-#define AI2_IR 1
-#define AI3_IR 2
-#define AI4_IR 3
-#define AI5_IR 4
-#define AI6_IR 5
-#define AI7_IR 6
-#define AI8_IR 7
+#define AI1_IR 1
+#define AI2_IR 2
+#define AI3_IR 3
+#define AI4_IR 4
+#define AI5_IR 5
+#define AI6_IR 6
+#define AI7_IR 7
+#define AI8_IR 8
 
 #define AM1_HR 528
 #define AM2_HR 529
@@ -74,7 +74,7 @@ byte ip[] = {192, 168, 4, 99};
 byte dns[] = {192, 168, 4, 7};
 byte gateway[] = {192, 168, 4, 8};
 byte serverIp[] = {192, 168, 4, 100};
-int serverPort = 503;
+int serverPort = 502;
 
 #define LAN_NO_ERROR 0
 #define LAN_NO_ETH 1
@@ -115,12 +115,12 @@ void setup()
   SPRINTLN("Compressor Monitor application starting");
   ui.initScreen();
   initEthernet();
-  delay (500);
+  delay(500);
   while (!logo.connect(&modbusTCPClient))
-  {  
+  {
     ui.renderSystemInfo();
-    delay (3000);
-  }  
+    delay(3000);
+  }
   delay(200);
 }
 
@@ -137,33 +137,48 @@ void loop()
     if (ui.activeView == ACTIVE_VIEW_OVERVIEW)
     {
       ui.activeView = ACTIVE_VIEW_SYSTEMINFO;
+      SPRINTLN("User select System info");
     }
     else
     {
       ui.activeView = ACTIVE_VIEW_OVERVIEW;
+      SPRINTLN("User select Overview ");
     }
   }
   logo.resetCache();
-  delay (250);
- 
-  if (ui.activeView==ACTIVE_VIEW_OVERVIEW) ui.renderOverviewScreen();
-    
-  while (digitalRead(PIN_BUTTON) && ui.activeView == ACTIVE_VIEW_OVERVIEW && modbusTCPClient.connected())
-  {    
-    delay(250);  
-  
-  if (logo.readRoomTemp(&valBuf))
-      ui.showRoomTemp(valBuf);
- if (logo.readCompressorStage1Temp(&valBuf))
-      ui.showCompressorStage1Temp(valBuf);
- if (logo.readCompressorStage2Temp(&valBuf))
-      ui.showCompressorStage2Temp(valBuf);
- if (logo.readCompressorStage3Temp(&valBuf))
-      ui.showCompressorStage3Temp(valBuf);
+  delay(250);
 
+  if (ui.activeView == ACTIVE_VIEW_OVERVIEW)
+    ui.renderOverviewScreen();
+
+  if (!modbusTCPClient.connected())
+  {
+    SPRINTLN("Modbus disconnected, trying to reconnect");
+    while (!logo.connect(&modbusTCPClient))
+    {
+      SPRINT(".");
+      delay(100);
+    }
+  }
+
+  while (digitalRead(PIN_BUTTON) && ui.activeView == ACTIVE_VIEW_OVERVIEW && modbusTCPClient.connected())
+  {
+    delay(250);
+
+    if (logo.readRoomTemp(&valBuf))
+      ui.showRoomTemp(valBuf);
+    if (logo.readCompressorStage1Temp(&valBuf))
+      ui.showCompressorStage1Temp(valBuf);
+    if (logo.readCompressorStage2Temp(&valBuf))
+      ui.showCompressorStage2Temp(valBuf);
+    if (logo.readCompressorStage3Temp(&valBuf))
+      ui.showCompressorStage3Temp(valBuf);
 
     if (logo.readEmergencyOffSwitch(&contactBuf))
       ui.showEmergencyOffSwitch(contactBuf);
+
+    if (logo.readPressureAir(&valBuf))
+      ui.showPressureAir(valBuf);
 
     if (logo.readMaintenanceSwitch(&contactBuf))
     {
@@ -183,14 +198,14 @@ void loop()
         ui.renderCompressor(COMPRESSOR_STATUS_OFF);
       }
     }
-   
-  } 
-  
-  if (ui.activeView==ACTIVE_VIEW_SYSTEMINFO) ui.renderSystemInfo();
-  while (ui.activeView == ACTIVE_VIEW_SYSTEMINFO && digitalRead(PIN_BUTTON)){
-    delay(200);    
   }
- 
+
+  if (ui.activeView == ACTIVE_VIEW_SYSTEMINFO)
+    ui.renderSystemInfo();
+  while (ui.activeView == ACTIVE_VIEW_SYSTEMINFO && digitalRead(PIN_BUTTON))
+  {
+    delay(200);
+  }
 }
 
 /**

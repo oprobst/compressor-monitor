@@ -101,10 +101,7 @@ void UI::renderOverviewScreen()
 	tft.print("Kompressor Monitor");
 
 	// show pressure
-	tft.setCursor(14, 136);
-	tft.setTextSize(2);
-	tft.setFont(&FreeSevenSegNumFontPlusPlus);
-	tft.print("323");
+    showPressureAir(-1.0);
 	// in bar
 	tft.setFont(&FreeSans12pt7b);
 	tft.setTextSize(2);
@@ -123,8 +120,17 @@ void UI::renderOverviewScreen()
 	tft.drawLine(240, 220, 240, 290, color);
 	showTemperatureOnLocation(-274, 2);
 	showTemperatureOnLocation(-274, 3);
+
+	renderCompressor(COMPRESSOR_STATUS_OFF);
 }
 
+
+void UI::showPressureAir(float f){
+	tft.setCursor(14, 136);
+	tft.setTextSize(2);
+	tft.setFont(&FreeSevenSegNumFontPlusPlus);
+	tft.print(f);
+}
 void UI::renderSystemInfo()
 {
 	tft.fillScreen(BLACK);
