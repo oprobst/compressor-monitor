@@ -5,8 +5,7 @@ Purpose is to visualize all runtime parameter of our scuba diving club compresso
 
 ## Hardware
 
-The System is powered by the 24V DC of the Logo!8. Therefore an additional Step-Down Converter (DC/DC) 24->5V is required.
-It powers the Arduino Uno (or compatible). On top of the Arduino, an Ethernet Shield is located. 
+The System is powered by the 24V DC of the Logo!8. Therefore an additional Step-Down Converter (DC/DC) 24->5V is required. Alternatively, the Ardunio can be powered by its own DC plugin or USB.
 
 These are the components currently in use:
 * [UNO R3 ATmega328P Board ATmega16U2 mit USB Kabel Arduino Uno R3 kompatibel](https://eckstein-shop.de/UNOR3ATmega328PBoardATmega16U2mitUSBKabelArduinoUnoR3kompatibel)
