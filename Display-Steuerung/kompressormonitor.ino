@@ -183,7 +183,7 @@ void loop()
       ui.showCompressorStage2Temp(valBuf);
     if (logo.readCompressorStage3Temp(&valBuf))
       ui.showCompressorStage3Temp(valBuf);
-    if (ui.fillType == FILLTYPE_AIR && logo.readPressureAir(&valBuf))
+    if ((ui.fillType == FILLTYPE_AIR|| ui.fillType == FILLTYPE_MAINTENANCE) && logo.readPressureAir(&valBuf))
       ui.showPressure(valBuf);
     if (ui.fillType == FILLTYPE_MIX && logo.readPressureMix(&valBuf))
       ui.showPressure(valBuf);
