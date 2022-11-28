@@ -118,6 +118,28 @@ bool Logo::readCompressorRunning(bool *value)
 }
 
 
+bool Logo::readHeater(bool *value)
+{
+  return checkCache(value, 17, Q3_C);
+}
+bool Logo::readSummerSwitch(bool *value)
+{
+  return checkCache(value, 18, I11_DI);
+}
+bool Logo::readRollershutter(bool *value)
+{
+  return checkCache(value, 19, Q6_C);
+}
+bool Logo::readVentilationInside(bool *value)
+{
+  return checkCache(value, 20, Q5_C);
+}
+bool Logo::readVentilationOutside(bool *value)
+{
+  return checkCache(value, 21, Q4_C);
+}
+
+
 bool Logo::checkCache(bool *resultbuffer, int index, int address)
 {
   bool value;
@@ -146,3 +168,12 @@ bool Logo::checkCache(long *resultbuffer, int index, int address)
   return changed;
 }
 
+
+
+void showFilterStatus (bool isGood);
+void showVentOutside (bool isRunning);
+void showVentInside (bool isRunning);
+void showHeating (bool isRunning);
+void showSeason (bool isSommer);
+void showRollershutter (bool isOpen);
+void showHumiditySensor (bool isOn);

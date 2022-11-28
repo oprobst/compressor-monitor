@@ -7,17 +7,6 @@ extern byte gateway[];
 extern byte serverIp[];
 extern int serverPort;
 
-void UI::print(int x, int y, int sz, int iconColor, const char *msg)
-{
-	int16_t x1, y1;
-	uint16_t wid, ht;
-	// tft.setFont( &FreeSans18pt7b);
-	tft.setCursor(x, y);
-	tft.setTextColor(color);
-	tft.setTextSize(sz);
-	tft.print(msg);
-}
-
 void UI::initScreen()
 {
 
@@ -61,7 +50,7 @@ void UI::initScreen()
 }
 
 void UI::renderAlert(Alert alert)
-{	
+{
 	tft.setTextSize(1);
 	tft.fillScreen(RED);
 	tft.setTextColor(WHITE);
@@ -88,19 +77,19 @@ void UI::renderAlert(Alert alert)
 		tft.print(" Temperatur Stufe 3\n zu hoch");
 		break;
 	case EMERGENCY_STOP:
-		tft.print( " NOT-AUS betaetigt");
+		tft.print(" NOT-AUS betaetigt");
 		break;
 	case COMPRESSOR_ERR:
 		tft.print(" Kompressor \n meldet Fehler");
 		break;
-    case SPS_OFFLINE:
+	case SPS_OFFLINE:
 		tft.print(" SPS auf STOP");
-		break;	
+		break;
 	default:
 		tft.print(" Unbekannter Fehler");
-	} 
+	}
 
-  tft.setFont(&FreeSans9pt7b);
+	tft.setFont(&FreeMono9pt7b);
 	tft.setCursor(4, 300);
 	tft.print("Fehler beheben und auf SPS quittieren");
 }
@@ -111,7 +100,6 @@ void UI::renderOverviewScreen()
 	tft.setFont(NULL);
 	tft.fillScreen(BLACK);
 	tft.setFont(&FreeSans12pt7b);
-
 
 	String filltypeName = "";
 	switch (fillType)
@@ -144,44 +132,60 @@ void UI::renderOverviewScreen()
 	tft.print(filltypeName);
 
 	// render clock
-	tft.setFont(&FreeSans9pt7b);
+	tft.setFont(&FreeMono9pt7b);
 	tft.setCursor(10, 18);
-	tft.print("Kompressor Monitor");
+	tft.print("Kompressor Monitor TSV Malsch");
 
 	// show pressure
 	showPressure(-1.0);
 
 	// show first temperature block
-	tft.drawLine(0, 220, 480, 220, color);
-	tft.drawLine(240, 150, 240, 220, color);
+	tft.drawLine(0, 218, 480, 218, color);
+	tft.drawLine(240, 150, 240, 218, color);
 	showTemperatureOnLocation(-274, 0);
 	showTemperatureOnLocation(-274, 1);
 	// in GRad
 
 	// show seconnd temperature block
-	tft.drawLine(0, 290, 480, 290, color);
-	tft.drawLine(240, 220, 240, 290, color);
+	tft.drawLine(0, 286, 480, 286, color);
+	tft.drawLine(240, 218, 240, 286, color);
 	showTemperatureOnLocation(-274, 2);
 	showTemperatureOnLocation(-274, 3);
 
 	renderCompressor(COMPRESSOR_STATUS_OFF);
+
+	// hier
+	tft.setTextColor(WHITE);
+	tft.setFont(&FreeMono9pt7b);
+	tft.setCursor(2, 300);
+	tft.print("Filter:     Vent. Aussen:    Saison:");
+	tft.setCursor(2, 311);
+	tft.print("Heizung:    Vent. Innen:     Rollladen:");
+	tft.setTextColor(color);
 }
 
 void UI::showPressure(long f)
-{	
+{
 	tft.fillRect(1, 23, 359, 126, BLACK);
 	tft.setCursor(14, 136);
 	tft.setTextSize(2);
 	tft.setFont(&SevenSegFont);
-	tft.print(f);
+	if (f > -1)
+	{
+		tft.print(f);
+	}
+	else
+	{
+		tft.print("---");
+	}
 
 	// in bar
 	tft.setFont(&FreeSans12pt7b);
 	tft.setTextSize(2);
 	tft.print("   bar");
 	tft.drawLine(0, 150, 480, 150, color);
+	tft.setTextSize(1);
 }
-
 
 char *UI::ip2CharArray(IPAddress ip)
 {
@@ -199,27 +203,26 @@ char *UI::mac2CharArray(byte mac[6])
 
 void UI::showTemperatureOnLocation(float temp, int location)
 {
-	tft.setTextSize(1);
 	switch (location)
 	{
 	case 0:
-		tft.setCursor(20, 210);
-		tft.fillRect(1, 151, 238, 69, BLACK);
+		tft.setCursor(20, 209);
+		tft.fillRect(1, 151, 238, 66, BLACK);
 		break;
 	case 1:
-		tft.setCursor(260, 210);
-		tft.fillRect(241, 151, 238, 69, BLACK);
+		tft.setCursor(260, 209);
+		tft.fillRect(241, 151, 238, 66, BLACK);
 		break;
 	case 2:
-		tft.setCursor(20, 280);
-		tft.fillRect(1, 221, 238, 69, BLACK);
+		tft.setCursor(20, 279);
+		tft.fillRect(1, 219, 238, 66, BLACK);
 		break;
 	default:
-		tft.setCursor(260, 280);
-		tft.fillRect(241, 221, 238, 69, BLACK);
+		tft.setCursor(260, 279);
+		tft.fillRect(241, 219, 238, 66, BLACK);
 		break;
 	}
-	tft.setFont(&FreeMono18pt7b);
+	tft.setFont(&SevenSegFont);
 	if (temp > -273)
 	{
 		tft.print(temp / 10.0f, 1);
@@ -229,10 +232,10 @@ void UI::showTemperatureOnLocation(float temp, int location)
 		tft.print("---");
 	}
 	// in GRad
-	tft.setFont(&FreeSans12pt7b);
+	tft.setFont(&DegreeFont);
 	tft.setTextSize(1);
 	// tft.print (0x00BA);
-	tft.print("   'C");
+	tft.print("   oC"); // special font rendering 'o' as degree symbol.
 }
 void UI::showRoomTemp(float f)
 {
@@ -257,7 +260,7 @@ void UI::renderCompressor(int status)
 {
 	uint16_t iconColor = BLACK;
 	String text = "";
-
+	tft.setFont(&FreeSans12pt7b);
 	switch (status)
 	{
 	case COMPRESSOR_STATUS_ON:
@@ -301,11 +304,10 @@ void UI::renderCompressor(int status)
 	tft.drawLine(offX + 40, offY + 25, offX + 40, offY + 35, iconColor);
 	tft.drawLine(offX + 39, offY + 25, offX + 39, offY + 35, iconColor);
 
-	tft.setTextSize(1);
 	tft.setTextColor(iconColor, BLACK);
 	tft.setCursor(offX, offY + 85);
 
-	tft.fillRect(offX, offY+65, 478-offX, 22, BLACK);
+	tft.fillRect(offX, offY + 65, 478 - offX, 22, BLACK);
 	tft.print(text);
 	tft.setTextColor(color, BLACK);
 }
@@ -376,8 +378,115 @@ void UI::renderSystemInfo()
 		tft.setTextColor(RED, BLACK);
 		tft.print("[FAILED] ");
 	}
+	tft.setTextSize(1);
+}
 
-	// tft.setCursor(0, 200);
-	// tft.setTextColor(WHITE);
-	// tft.print("Uptime     : ");
+void UI::showFilterStatus(bool isGood)
+{
+	tft.setFont(&FreeMono9pt7b);
+	tft.setCursor(90, 300);
+	tft.fillRect(90, 291, 32, 12, BLACK);
+	if (isGood)
+	{
+		tft.setTextColor(GREEN);
+		tft.print("GUT");
+	}
+	else
+	{
+		tft.setTextColor(RED);
+		tft.print("HI");
+	}
+	tft.setTextColor(color);
+}
+
+void UI::showVentOutside(bool isRunning)
+{
+	tft.setFont(&FreeMono9pt7b);
+	tft.fillRect(280, 291, 30, 12, BLACK);
+	tft.setCursor(280, 300);
+
+	if (isRunning)
+	{
+		tft.setTextColor(GREEN);
+		tft.print("AN");
+	}
+	else
+	{
+		tft.setTextColor(BLUE);
+		tft.print("AUS");
+	}
+	tft.setTextColor(color);
+}
+
+void UI::showVentInside(bool isRunning)
+{
+	tft.setFont(&FreeMono9pt7b);
+	tft.fillRect(280, 302, 30, 12, BLACK);
+	tft.setCursor(280, 312);
+	if (isRunning)
+	{
+		tft.setTextColor(GREEN);
+		tft.print("AN");
+	}
+	else
+	{
+		tft.setTextColor(BLUE);
+		tft.print("AUS");
+	}
+	tft.setTextColor(color);
+}
+
+void UI::showHeating(bool isRunning)
+{
+	tft.setFont(&FreeMono9pt7b);
+	tft.fillRect(90, 302, 32, 12, BLACK);
+	tft.setCursor(90, 312);
+	if (isRunning)
+	{
+		tft.setTextColor(GREEN);
+		tft.print("AN");
+	}
+	else
+	{
+		tft.setTextColor(BLUE);
+		tft.print("AUS");
+	}
+	tft.setTextColor(color);
+}
+
+void UI::showSeason(bool isWinter)
+{
+	tft.setFont(&FreeMono9pt7b);
+	tft.fillRect(440, 291, 32, 12, BLACK);
+	tft.setCursor(440, 300);
+
+	if (isWinter)
+	{
+		tft.setTextColor(CYAN);
+		tft.print("Win");
+	}
+	else
+	{
+		tft.setTextColor(YELLOW);
+		tft.print("Som");
+	}
+	tft.setTextColor(color);
+}
+
+void UI::showRollershutter(bool isOpen)
+{
+	tft.setFont(&FreeMono9pt7b);
+	tft.fillRect(440, 302, 32, 12, BLACK);
+	tft.setCursor(440, 312);
+	if (isOpen)
+	{
+		tft.setTextColor(GREEN);
+		tft.print("AUF");
+	}
+	else
+	{
+		tft.setTextColor(BLUE);
+		tft.print("ZU");
+	}
+	tft.setTextColor(color);
 }

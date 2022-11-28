@@ -50,6 +50,7 @@ int filltypeLastLoop;
 // initialize the ethernet adapter. Trying DHCP, then fallback to defaults
 void initEthernet();
 bool checkForAlerts();
+void reconnect ();
 
 /**
  * Setup
@@ -130,15 +131,7 @@ void loop()
   if (ui.activeView == ACTIVE_VIEW_OVERVIEW)
     ui.renderOverviewScreen();
 
-  if (!modbusTCPClient.connected()) // todo: Notwendig?
-  {
-    SPRINTLN("Modbus disconnected, trying to reconnect");
-    while (!logo.connect(&modbusTCPClient))
-    {
-      SPRINT(".");
-      delay(1000);
-    }
-  }
+ 
   SPRINTLN("Check for Overview");
   while (digitalRead(PIN_BUTTON) && ui.activeView == ACTIVE_VIEW_OVERVIEW && modbusTCPClient.connected())
   {
@@ -175,6 +168,19 @@ void loop()
     }
 
     // Finally, check for all measurements
+    if (logo.readHeater(&contactBuf))
+      ui.showHeating(contactBuf);
+    if (logo.readSummerSwitch(&contactBuf))
+      ui.showSeason(contactBuf);
+    if (logo.readRollershutter(&contactBuf))
+      ui.showRollershutter(contactBuf);
+    if (logo.readVentilationInside(&contactBuf))
+      ui.showVentInside(contactBuf);
+    if (logo.readVentilationOutside(&contactBuf))
+      ui.showVentOutside(contactBuf);
+    
+      ui.showFilterStatus(true); //will be overwritten by alert
+
     if (logo.readRoomTemp(&valBuf))
       ui.showRoomTemp(valBuf);
     if (logo.readCompressorStage1Temp(&valBuf))
@@ -183,7 +189,7 @@ void loop()
       ui.showCompressorStage2Temp(valBuf);
     if (logo.readCompressorStage3Temp(&valBuf))
       ui.showCompressorStage3Temp(valBuf);
-    if ((ui.fillType == FILLTYPE_AIR|| ui.fillType == FILLTYPE_MAINTENANCE) && logo.readPressureAir(&valBuf))
+    if ((ui.fillType == FILLTYPE_AIR || ui.fillType == FILLTYPE_MAINTENANCE) && logo.readPressureAir(&valBuf))
       ui.showPressure(valBuf);
     if (ui.fillType == FILLTYPE_MIX && logo.readPressureMix(&valBuf))
       ui.showPressure(valBuf);
@@ -261,6 +267,7 @@ bool checkForAlerts()
   {
     alertActive = true;
     ui.renderAlert(Alert::SPS_OFFLINE);
+    reconnect();
   }
 
   if (logo.readAlertTempRoom(&contactBuf))
@@ -347,4 +354,16 @@ void initEthernet()
   SPRINTLN(Ethernet.gatewayIP());
   SPRINT("SubnetMask: ");
   SPRINTLN(Ethernet.subnetMask());
+}
+
+void reconnect (){
+  if (!modbusTCPClient.connected()) 
+  {
+    SPRINTLN("Modbus disconnected, trying to reconnect");
+    while (!logo.connect(&modbusTCPClient))
+    {
+      SPRINT(".");
+      delay(1000);
+    }
+  }
 }

@@ -4,16 +4,16 @@
 
 #include "Adafruit_GFX.h"
 #include <MCUFRIEND_kbv.h>
-#include <Fonts/FreeSerif24pt7b.h >
-#include <Fonts/FreeMono18pt7b.h >
+#include <Fonts/FreeSerif24pt7b.h > 
 #include <Fonts/FreeSans12pt7b.h >
-#include <Fonts/FreeSans9pt7b.h>
+#include <Fonts/FreeMono9pt7b.h>
 
 #include <FreeDefaultFonts.h>
 
 #include <FreeSevenSegNumFontPlusPlus.h>
 #include "DebugSerial.h"
 #include "SevenSegFont.h"
+#include "DegreeFont.h"
 
 #include <Ethernet.h>
 #include "Data.h"
@@ -72,14 +72,6 @@ void renderAlertScreen ();
 
 void renderAlert (Alert alert);
 
-void print (String c);
-
-void println(String c);
-
-
-void print(int x, int y, int sz, int color, const char *msg);
-
-void printResult (int i);
 
 void showPressure(long f);
 
@@ -87,6 +79,14 @@ void showRoomTemp (float f);
 void showCompressorStage1Temp (float f);
 void showCompressorStage2Temp (float f);
 void showCompressorStage3Temp (float f);
+
+void showFilterStatus (bool isGood);
+void showVentOutside (bool isRunning);
+void showVentInside (bool isRunning);
+void showHeating (bool isRunning);
+void showSeason (bool isWinter);
+void showRollershutter (bool isOpen);
+
 
 /**
  * Select status from 
