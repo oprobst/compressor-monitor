@@ -1,6 +1,11 @@
-# Compressor Monitor
+# TSV Malsch Kompressor Steuerung und Monitor
 
-Application uses an Arduino with ETH shield and LCD Display to connect to Siemens Logo!8 via TCP Modbus and visualizes data.
+Consists of 3 parts:
+* Logo!8 Compressor programm
+* CAD model of housing for controll unit
+* LCD Display with Arduino and Ethernet shield to visualize current compressor status
+
+The LCD Display Application uses an Arduino with ETH shield and LCD Display to connect to Siemens Logo!8 via TCP Modbus and visualizes data.
 Purpose is to visualize all runtime parameter of our scuba diving club compressor for the operator.
 
 ## Hardware
@@ -14,4 +19,22 @@ These are the components currently in use:
 * [SunFounder Ethernet Shield W5100 for Arduino UNO R3 Mega 2560 1280 A057 ](https://smile.amazon.de/gp/product/B00HG82V1A/ref=ppx_yo_dt_b_asin_title_o04_s00?ie=UTF8&psc=1)
 * [Anzeigemodul - 3,5" TFT-LCD-Display-Modul 480x320 for Arduino UNO & MEGA 2560](https://smile.amazon.de/gp/product/B07Y5Z6VZB/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1)
 
+## CAD
+Folder CAD-Gehäuse contains FreeCAD models for the housing
+
 ## Software
+
+### Siemens Logo!8
+
+The program is located in folder Siemens Logo.
+Version 3 is the old one for Logo!6 (decommissioned in early 2023).
+Version 4 is the current one for Logo!8
+
+### Display
+The display controller can be found under Display-Steuerung. The kompressormonitor.ino file uses following support classes:
+* DebugSerial: Helper for enabling debug output to Serial Port
+* DegreeFont: Just the degree symbol and a 'C'
+* Logo: Connectivity to the Logo8 using modbus (acting as client)
+* SevenSegFont: Copy of the SevenSegFont of MCUFRIEND_kbv, but with an additional '-' minus character.
+* ui: Responsible for rendering the ui.
+* data: global shared information object about connectivity status.

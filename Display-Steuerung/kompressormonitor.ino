@@ -31,7 +31,7 @@ int serverPort = 502;
 #include "Logo.h"
 
 // global shared data object contains all measurements
-Data data; // TODO: Check about deleting me!
+Data data; 
 
 // Access interface to the Siemens Logo
 Logo logo;
