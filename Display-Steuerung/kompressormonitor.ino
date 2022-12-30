@@ -6,6 +6,7 @@
  *
  *
  */
+
 // configure ethernet setting here:
 //  Some random MAC Address (since there is no one on the board)
 byte mac[] = {0xAA, 0x12, 0xBE, 0xEF, 0xFE, 0xED};
@@ -80,7 +81,8 @@ void setup()
     data.modbusConnected = false;
     ui.renderSystemInfo();
     delay(3000);
-  }
+  } 
+  modbusTCPClient.setTimeout(1000);
   delay(200);
   data.modbusConnected = true;
 
@@ -133,10 +135,10 @@ void loop()
 
  
   SPRINTLN("Check for Overview");
-  while (digitalRead(PIN_BUTTON) && ui.activeView == ACTIVE_VIEW_OVERVIEW && modbusTCPClient.connected())
+  while (digitalRead(PIN_BUTTON) && ui.activeView == ACTIVE_VIEW_OVERVIEW )
   {
     // first check for alerts of any kind...
-    if (checkForAlerts())
+    if (modbusTCPClient.connected() && checkForAlerts())
     {
       ui.activeView = ACTIVE_VIEW_ALERT;
       break;
@@ -208,8 +210,9 @@ void loop()
     delay(333); // not too much flicker...
   }
 
+//Alert occurred? Show failure screen
   SPRINTLN("Check for Alert View");
-  while (ui.activeView == ACTIVE_VIEW_ALERT)
+  while (ui.activeView == ACTIVE_VIEW_ALERT && modbusTCPClient.connected())
   {
     logo.resetCache();
     if (!checkForAlerts())
@@ -217,23 +220,31 @@ void loop()
     delay(2000);
   }
 
+// Modbus Connectivity issues, show system info and try to reconnect.
   if (!modbusTCPClient.connected())
   {
     data.modbusConnected = false;
-    ui.activeView == ACTIVE_VIEW_SYSTEMINFO;
+    ui.activeView = ACTIVE_VIEW_SYSTEMINFO;
   }
-  if (ui.activeView == ACTIVE_VIEW_SYSTEMINFO)
-    ui.renderSystemInfo();
-
+  if (ui.activeView == ACTIVE_VIEW_SYSTEMINFO) ui.renderSystemInfo();
   SPRINTLN("Check for System Info");
   while (ui.activeView == ACTIVE_VIEW_SYSTEMINFO && digitalRead(PIN_BUTTON))
   {
-    delay(200);
+    if (!modbusTCPClient.connected()) {
+      reconnect();
+      data.modbusConnected = true;
+      ui.renderSystemInfo();
+      delay (1000);
+      ui.activeView = ACTIVE_VIEW_OVERVIEW;
+    }     
   }
 }
 
+
+
 bool checkForAlerts()
 {
+
   bool alertActive = false;
   if (logo.readAlertFilterwechsel(&contactBuf))
   {
@@ -354,16 +365,18 @@ void initEthernet()
   SPRINTLN(Ethernet.gatewayIP());
   SPRINT("SubnetMask: ");
   SPRINTLN(Ethernet.subnetMask());
+  client.setTimeout(500);
+  client.setConnectionTimeout(500);
+
+
 }
 
-void reconnect (){
-  if (!modbusTCPClient.connected()) 
-  {
+void reconnect (){  
     SPRINTLN("Modbus disconnected, trying to reconnect");
     while (!logo.connect(&modbusTCPClient))
     {
       SPRINT(".");
       delay(1000);
     }
-  }
+  
 }
