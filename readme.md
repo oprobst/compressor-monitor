@@ -1,6 +1,5 @@
 # TSV Malsch Kompressor Steuerung und Monitor
 
-
 ![Logo Tauchsportverein Malsch](./Dokumentation/Logo%20TSV.png)  
 
 This project contains all sources for the compressor of the Tauchsportverein Malsch e.V.
@@ -15,13 +14,14 @@ It consists of:
 
 ### Siemens Logo
 
-| Produkt                    | Product id            | Function |
-| LOGO! Power                | 6EP1331-1SH02         | Power supply, reuse of old Logo 6 installation |
-| Logo!8 Logikmodul          | 6ED1052-1HB08-0BA1    | Base module for Siemens Logo |
+| Produkt                    | Product id            | Function                                              |
+| -------------------------- | --------------------- | ----------------------------------------------------- |
+| LOGO! Power                | 6EP1331-1SH02         | Power supply, reuse of old Logo 6 installation        |
+| Logo!8 Logikmodul          | 6ED1052-1HB08-0BA1    | Base module for Siemens Logo                          |
 | Siemens LOGO! 8 AM2 RTD    | 6ED1055-1MD00-0BA2    | Temperature measurements room and 3 compressor stages |
-| Siemens LOGO! 8 AM2	     | 6ED1055-1MA00-0BA2    | Measurements for preasure air and mix |
-| Siemens LOGO! 8 DM8 12/24R | 6ED1055-1MB00-0BA2    | Additional digital in- and outputs |
-| CMK2000                    | 6BK1700-0BA20-0AA0    | Connectivity to home automation |
+| Siemens LOGO! 8 AM2	     | 6ED1055-1MA00-0BA2    | Measurements for preasure air and mix                 |
+| Siemens LOGO! 8 DM8 12/24R | 6ED1055-1MB00-0BA2    | Additional digital in- and outputs                    |
+| CMK2000                    | 6BK1700-0BA20-0AA0    | Connectivity to home automation                       |
 	
 ### Display and control unit
 The LCD Display Application uses an Arduino with ETH shield and LCD Display to connect to Siemens Logo!8 via TCP Modbus and visualizes data.
@@ -56,9 +56,10 @@ The display controller can be found under Display-Steuerung. The kompressormonit
 * ui: Responsible for rendering the ui.
 * data: global shared information object about connectivity status.
 
-# Further documentation
+## Further documentation
 
 Have a look at folder [Documentation](./Dokumentation/)
 
 Link to this documentation: [https://github.com/oprobst/compressor-monitor/](https://github.com/oprobst/compressor-monitor/)
+
 ![QR Code linking this documentation](./Dokumentation/QR-Code-Link-Github.png)
