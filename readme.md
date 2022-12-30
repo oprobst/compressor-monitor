@@ -1,14 +1,31 @@
 # TSV Malsch Kompressor Steuerung und Monitor
 
-Consists of 3 parts:
-* Logo!8 Compressor programm
-* CAD model of housing for controll unit
-* LCD Display with Arduino and Ethernet shield to visualize current compressor status
 
-The LCD Display Application uses an Arduino with ETH shield and LCD Display to connect to Siemens Logo!8 via TCP Modbus and visualizes data.
-Purpose is to visualize all runtime parameter of our scuba diving club compressor for the operator.
+![Logo Tauchsportverein Malsch](./Dokumentation/Logo%20TSV.png)  
+
+This project contains all sources for the compressor of the Tauchsportverein Malsch e.V.
+
+It consists of:
+* Logo!8 Compressor programm
+* CAD model of housing for control unit
+* LCD Display with Arduino and Ethernet shield to visualize current compressor status
+* Documentation folder
 
 ## Hardware
+
+### Siemens Logo
+
+| Produkt                    | Product id            | Function |
+| LOGO! Power                | 6EP1331-1SH02         | Power supply, reuse of old Logo 6 installation |
+| Logo!8 Logikmodul          | 6ED1052-1HB08-0BA1    | Base module for Siemens Logo |
+| Siemens LOGO! 8 AM2 RTD    | 6ED1055-1MD00-0BA2    | Temperature measurements room and 3 compressor stages |
+| Siemens LOGO! 8 AM2	     | 6ED1055-1MA00-0BA2    | Measurements for preasure air and mix |
+| Siemens LOGO! 8 DM8 12/24R | 6ED1055-1MB00-0BA2    | Additional digital in- and outputs |
+| CMK2000                    | 6BK1700-0BA20-0AA0    | Connectivity to home automation |
+	
+### Display and control unit
+The LCD Display Application uses an Arduino with ETH shield and LCD Display to connect to Siemens Logo!8 via TCP Modbus and visualizes data.
+Purpose is to visualize all runtime parameter of our scuba diving club compressor for the operator.
 
 The System is powered by the 24V DC of the Logo!8. Therefore an additional Step-Down Converter (DC/DC) 24->5V is required. Alternatively, the Ardunio can be powered by its own DC plugin or USB.
 
@@ -38,3 +55,10 @@ The display controller can be found under Display-Steuerung. The kompressormonit
 * SevenSegFont: Copy of the SevenSegFont of MCUFRIEND_kbv, but with an additional '-' minus character.
 * ui: Responsible for rendering the ui.
 * data: global shared information object about connectivity status.
+
+# Further documentation
+
+Have a look at folder [Documentation](./Dokumentation/)
+
+Link to this documentation: [https://github.com/oprobst/compressor-monitor/](https://github.com/oprobst/compressor-monitor/)
+![QR Code linking this documentation](./Dokumentation/QR-Code-Link-Github.png)
