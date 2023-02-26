@@ -56,6 +56,13 @@ The display controller can be found under Display-Steuerung. The kompressormonit
 * ui: Responsible for rendering the ui.
 * data: global shared information object about connectivity status.
 
+Libraries:
+* Ethernet by Arduino 2.0
+* ArduinoModbus 1.0
+* ArduinoRS485 1.0
+* MCUFRIEND_kbv 3.0
+
+
 ## Further documentation
 
 Have a look at folder [Documentation](./Dokumentation/)
