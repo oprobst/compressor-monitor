@@ -28,7 +28,7 @@ byte mac[] = {0xAA, 0x12, 0xBE, 0xEF, 0xFE, 0xED};
 byte ip[] = {192, 168, 1, 35};
 byte dns[] = {192, 168, 1, 1};
 byte gateway[] = {192, 168, 1, 1};
-byte serverIp[] = {192, 168, 1, 15};
+byte serverIp[] = {192, 168, 1, 100};
 int serverPort = 502;
 
 // global shared data object contains all measurements
