@@ -108,6 +108,13 @@ bool Logo::readAlertSpsOffline(bool *value)
   return checkCache(value, 14, M16_C);
 }
 
+bool Logo::readAlertPressure(bool *value)
+{
+  return checkCache(value, 22, M17_C);
+}
+
+
+
 bool Logo::readMixerValve(bool *value)
 {
   return checkCache(value, 15, Q12_C);

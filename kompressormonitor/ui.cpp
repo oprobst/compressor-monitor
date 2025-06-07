@@ -66,15 +66,15 @@ void UI::renderAlert(Alert alert)
 		break;
 	case TEMP_STAGE1:
 
-		tft.print(" Temperatur Stufe 1\n zu hoch");
+		tft.print(" Temperatur Stufe 1\n ausserhalb zul. Bereich");
 		break;
 
 	case TEMP_STAGE2:
-		tft.print(" Temperatur Stufe 2\n zu hoch");
+		tft.print(" Temperatur Stufe 2\n ausserhalb zul. Bereich");
 
 		break;
 	case TEMP_STAGE3:
-		tft.print(" Temperatur Stufe 3\n zu hoch");
+		tft.print(" Temperatur Stufe 3\n ausserhalb zul. Bereich");
 		break;
 	case EMERGENCY_STOP:
 		tft.print(" NOT-AUS betaetigt");
@@ -84,6 +84,9 @@ void UI::renderAlert(Alert alert)
 		break;
 	case SPS_OFFLINE:
 		tft.print(" SPS auf STOP");
+		break;
+	case PRESSURE:
+		tft.print(" Kein Druckanstieg\n festgestellt");
 		break;
 	default:
 		tft.print(" Unbekannter Fehler");

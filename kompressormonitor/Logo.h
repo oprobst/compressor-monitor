@@ -134,6 +134,7 @@ public:
     bool readAlertTempStage3(bool *value);
     bool readAlertSpsOffline(bool *value);
     bool readAlertEmergencyStop(bool *value);
+    bool readAlertPressure(bool *value);
 
     void resetCache();
 };

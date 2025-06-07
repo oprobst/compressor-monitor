@@ -316,6 +316,16 @@ bool checkForAlerts()
       ui.renderAlert(Alert::TEMP_STAGE3);
     }
   }
+
+  if (logo.readAlertPressure(&contactBuf))
+  {
+    if (contactBuf)
+    {
+      alertActive = true;
+      ui.renderAlert(Alert::PRESSURE);
+    }
+  }
+  
   return alertActive;
 }
 /**
